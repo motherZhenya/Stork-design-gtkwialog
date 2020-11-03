@@ -1,0 +1,113 @@
+#!/bin/bash
+# =======>2019-20<==========
+# : >> nikonik@chita.ru << :
+# ==========================
+# Copyright © 2018-2020 Nikolay Andriychuk.
+# Configuring the XFCE 4 GUI
+# Настройка конфигурации графической оболочки XFCE 4
+# Приложения для настройки рабочего стола и системы
+# Мои настройки панели 1-2
+
+ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+ cd `dirname $0`; echo "$PWD"
+
+./x-stork-dizayn-panel-main &
+wait
+
+sleep 0.4
+
+# Номер первой панели. Зависит от ОС
+  Panel_num=$(grep --only-matching --max-count=1 'panel-[0-1]' ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml | sed q) 2> /dev/null
+[[ "${Panel_num}" == panel-[0-2] ]] || exit
+
+theme_name="$(xfconf-query -c xsettings -p /Net/ThemeName -v)"
+P_Image=$(find "$HOME/.themes/${theme_name}/gtk-2.0" "/usr/share/themes/${theme_name}/gtk-2.0" -type f -name "panel-bg.*" 2> /dev/null | head -n1)
+[[ -n ${P_Image} ]] || P_Image=$(find /usr/share/themes/*/gtk-2.0/[pP]anel/panel-bg.png | head -n1)
+Panel_N1=$(xfconf-query --channel xfce4-panel --property /panels | grep '^[0-9]$' | head -n1)
+Panel_N2=$(xfconf-query --channel xfce4-panel --property /panels | grep '^[0-9]$' | tail -n1)
+echo "$Panel_N1"
+
+
+   if [[ -n "${Panel_N1}" ]]; then
+	echo "настройки панели 1"
+         xfconf-query --channel xfce4-panel --property /panels --type int --set "1" --type int --set "2" --create --force-array
+         #xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}  "" --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/autohide-behavior --type int    --set 0           --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/background-alpha  --type int    --set 80          --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/background-image  --type string --set "$P_Image"  --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/background-style  --type int    --set 2           --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/disable-struts    --type bool   --set false       --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/enter-opacity     --type int    --set 100         --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/leave-opacity     --type int    --set 100         --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/length            --type int    --set 100         --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/length-adjust     --type bool   --set false       --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/mode              --type int    --set 0           --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/nrows             --type int    --set 1           --create
+         # xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/plugin-ids      --set   <<UNSUPPORTED>>
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/position       --type string --set "p=6;x=0;y=0"  --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/position-locked   --type bool   --set true        --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N1}/size              --type int    --set 32          --create
+   fi
+
+   if [[ -n "${Panel_N2}" ]]; then
+	echo "настройки панели 2"
+         #xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2} --type int --set "" --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/autohide-behavior --type int    --set 0          --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/background-alpha  --type int    --set 80         --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/background-image  --type string --set "$P_Image" --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/background-style  --type int    --set 2          --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/disable-struts    --type bool   --set false      --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/enter-opacity     --type int    --set 100        --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/leave-opacity     --type int    --set 100        --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/length            --type int    --set 100        --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/length-adjust     --type bool   --set false      --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/mode              --type int    --set 0          --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/nrows             --type int    --set 1          --create
+         # xfconf-query --channel xfce4-panel --property /panels/pane-2-1/plugin-ids      --set   <<UNSUPPORTED>>
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/position       --type string    --set "p=8;x=0;y=0" --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/position-locked   --type bool   --set true       --create
+         xfconf-query --channel xfce4-panel --property /panels/panel-${Panel_N2}/size              --type int    --set 32         --create
+   fi
+
+xfconf-query --channel xfwm4 --property /general/workspace_names --type string --set "1" --type string --set "2" --type string --set "3" --type string --set "4" --create --force-array
+xfconf-query --channel xfwm4         --property /general/workspace_count        --type int  --set 4     --create
+xfconf-query --channel xfce4-desktop --property /backdrop/single-workspace-mode --type bool --set false --create
+
+#workspace_scrolling=$(xfconf-query -c xfce4-panel -l | grep '/workspace-scrolling')
+
+#xfconf-query --channel  xfce4-panel --property ${workspace_scrolling} --type bool --set true
+
+#miniature_vw=$(xfconf-query -c xfce4-panel -l | grep '/workspace-scrolling' | cut -d / -f-3)
+#xfconf-query --channel  xfce4-panel --property ${miniature_vw}/miniature-view --type bool --set false --create
+killall 'cairo-dock' &
+
+#
+# добавляем русский язык и переключение раскладки
+#
+setxkbmap -option grp:switch,grp:ctrl_shift_toggle us,ru 
+#
+# Установка numlockx
+#
+numlockx on
+#
+# Добавляем в тулбар значки раскладки: включаем плагины:
+#
+xfconf-query -c xfce4-panel -p /plugins/plugin-34 -n -t string -s "xkb"
+#
+# указываем их места на тулбаре:
+#
+xfconf-query -c xfce4-panel -p /panels/panel-1/plugin-ids -t int -s 1 -t int -s 2 -t int -s 3 -t int -s 4 -t int -s 5 -t int -s 6 -t int -s 7 -t int -s 8 -t int -s 9 -t int -s 11 -t int -s 12 -t int -s 13 -t int -s 14 -t int -s 15 -t int -s 16 -t int -s 34 -t int -s 17 -t int -s 18
+#
+
+sleep 0.2
+ xfconf-query --channel xfce4-session -p /sessions/Failsafe/Client1_Command --reset
+ xfconf-query --channel xfce4-session -p /sessions/Failsafe/Client0_Command --reset
+sleep 0.2
+ xfwm4 --compositor=on --replace & 
+sleep 0.4
+xfce4-panel --restart &
+
+
+exit 0
+

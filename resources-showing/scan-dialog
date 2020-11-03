@@ -1,0 +1,137 @@
+#!/bin/bash
+# ==========>2020<==========
+# : >> nikonik@chita.ru << :
+# ==========================
+# Copyright © 2018-2020 Nikolay Andriychuk.
+# Я не программист и люблю взламывать Yad и все классные вещи, возможные с Yad & Bash и тд:
+
+
+ test -f "$HOME/.local/share/stork/baza_maciv-guery" 2>/dev/null || mkdir --parents "$HOME/.local/share/stork/Aplication/"
+      touch "$HOME/.local/share/stork/baza_maciv-guery"
+     "${0%/*/*}"/resources-showing/scan-masiv
+ wait
+
+export DIR_NAME_WM="$(wmctrl -m | grep -Eom1 '[X]fwm4$|[M]etacity$|[C]ompiz$')"
+
+THEME_GTK_2="$(xfconf-query -c xsettings -p /Net/ThemeName -v 2> /dev/null)"
+
+      printf '%b\n' "$DIR_NAME_WM" | grep -Eo '[X]fwm4' && THEME_NAME="$(xfconf-query -c xfwm4 -p /general/theme -v 2> /dev/null)"
+
+      printf '%b\n' "$DIR_NAME_WM" | grep -Eo '[M]etacity' && THEME_NAME="$(gsettings get org.gnome.metacity.theme name | tr -d \"\' 2> /dev/null)"
+
+      pidof 'gtk-window-decorator' 2> /dev/null   && THEME_NAME="$(gsettings get org.gnome.metacity.theme name | tr -d \"\' 2> /dev/null)"
+
+      pidof 'emerald' 2> /dev/null && THEME_NAME="$(cat "$HOME/.emerald/theme/themename" 2> /dev/null)"
+
+   [[ "${THEME_NAME}"  == "${THEME_GTK_2}" ]] && THEME_NAME="" || THEME_NAME="-${THEME_NAME}"
+export THEME_NAME="$(printf '%b' "${THEME_GTK_2}${THEME_NAME}" |  sed 's/-$//' | cut -c 1-42)"
+
+
+click_one () {
+[[ -e "$HOME/.local/share/stork/Aplication/${THEME_NAME}.png" ]] || exit 0
+      rm -r "$HOME/.local/share/stork/Aplication/${THEME_NAME}.png"
+      rm -r "$HOME/.local/share/stork/Aplication/${THEME_NAME}.desktop"
+      rm -r "$HOME/.local/share/stork/Aplication/${THEME_NAME}.sh"
+      exit 0
+}
+[[ "${1}" == "click-one" ]] && click_one && exit 0
+
+click_two () {
+  wmanagerX=$(wmctrl -m | grep Name: | awk  '{print $2}') 2> /dev/null
+if [[ "${wmanagerX}" = "Compiz" ]]; then
+      scrot --focused --border \
+      "$HOME/.local/share/stork/Aplication/${THEME_NAME}.png"
+      ( cd $HOME/.storkdata/Aplication/ &&  mogrify -resize 260x *.png )
+   else
+      import -frame -window \
+     "$(xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW): window" | cut -d" " -f5) | cut -d"," -f1)" \
+     "$HOME/.local/share/stork/Aplication/${THEME_NAME}.png"
+     ( cd $HOME/.local/share/stork/Aplication/ &&  mogrify -resize 260x *.png )
+fi
+
+# Создать desktop файл
+cat <<END > ${HOME}/.local/share/stork/Aplication/${THEME_NAME}.desktop
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=${THEME_NAME}
+Name[ru]=${THEME_NAME}
+Comment=Custom theme ${themeH}
+Comment[ru]=Тема пользователя ${themeH}
+Exec=$HOME/.local/share/stork/Aplication/${THEME_NAME}.sh
+Icon=$HOME/.local/share/stork/Aplication/${THEME_NAME}.png
+Path=$HOME/.local/share/stork/Aplication/
+Terminal=false
+StartupNotify=false
+
+END
+
+
+# Копировать sh файл
+cat "$HOME/.local/share/stork/baza_maciv-guery" > "$HOME/.local/share/stork/Aplication/${THEME_NAME}.sh"
+sleep 0.4
+
+    cd $HOME/.local/share/stork/Aplication/
+    chmod u+x "$HOME/.local/share/stork/Aplication/${THEME_NAME}.desktop"
+    chmod u+x "$HOME/.local/share/stork/Aplication/${THEME_NAME}.sh"
+    wmctrl -k off
+
+ exit 0
+}
+
+# END
+
+[[ "${1}" == "click-two" ]] && click_two && exit 0
+
+wmctrl -k on  # Свернуть рабочий стол
+
+
+export MAIN_DIALOG='
+<window title="Custom theme" window_position="3" icon-name="plugins-general" resizable="false" width-request="320">
+ <vbox>
+  <vbox spacing="10">
+
+			<hbox space-expand="true">
+			    <button>
+			          <input file icon="gohome"></input>
+			    </button>
+			    <button>
+			          <input file icon="fileopen"></input>
+ 			    </button>
+			    <button>
+			          <input file icon="filenew"></input>
+			    </button>
+			    <text width-request="180">
+			          <label>Save snapshot: Window Manager '$DIR_NAME_WM'</label>
+			    </text>
+			</hbox>
+
+			<vbox>
+			    <button>
+			          <label>'$THEME_NAME'</label>
+			          <action>xfce4-screenshooter &</action>
+			    </button>
+			</vbox>
+
+			<hbox space-expand="true" space-fill="false">
+			    <button  width-request="90" use-stock="true"  label="gtk-delete"><action>'"exec $0 click-one "' &</action></button>
+			    <button  width-request="100" use-stock="true" label="gtk-save"><action>'" exec $0 click-two "'  &</action></button>
+			    <button  width-request="90" use-stock="true"  label="gtk-close"></button>
+			</hbox>
+
+  </vbox>
+ </vbox>
+</window>
+'
+
+gtkwialog --program=MAIN_DIALOG
+
+ wmctrl -k off
+ killall xfce-interface-xsettings
+ sleep 1
+ exec ${0%/*/*}/xfce-interface-xsettings &
+
+
+ exit 0
+
+

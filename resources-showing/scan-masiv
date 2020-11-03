@@ -1,0 +1,159 @@
+#!/bin/bash
+# =^^^====>2019-2020<=======
+# : >> nikonik@chita.ru << :
+# =====^^============^^=====
+##Array of commands Xfce...#
+
+LC_NUMERIC=C
+DIRECTORU=$(pwd)
+cd $HOME/.emerald/themes/
+for i in $HOME/.emerald/themes/*;do
+    [[ -e $i/themename ]] || printf '%b\n' "${i##*/}" >"${i/}/themename"
+done
+
+cd $HOME/.themes/
+for d in $HOME/.themes/*;do
+    [[ -e $d/gtk-3.0 ]] && printf '%b\n' "${d##*/}" > "${d}/gtk-3.0/themename"
+done
+
+cd "${DIRECTORU}"
+
+printf '%b\n' '#!/bin/bash
+# =^^^====>2019-2020<=======
+# : >> nikonik@chita.ru << :
+# =====^^============^^=====
+##Array of commands Xfce...#
+#' > "$HOME/.local/share/stork/baza_maciv-guery"
+printf '%b\n' "# $(date)
+" >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+printf '%b\n' 'notify-send -i info Information  "DISCLAIMER: Be very careful with this code.
+  If possible, test on a spare system or in a virtual machine.
+  This works on my system (in this case xubuntu), but I cannot vouch for others.
+  You have been warned."
+
+wmctrl -c "Custom desktop settings"
+' >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+                    printf '%b\n' '
+ # Array of commands  xfconf-query...' >> "$HOME/.local/share/stork/baza_maciv-guery"
+declare -a CHANELS=$(xfconf-query -l | grep '[a-zA-Z]' | tr -d ' ' | grep -Ew '(^xfce4-notifyd$|^xsettings$|^xfwm4$|^thunar$|^xfce4-desktop$|^xfce4-session$|^xfce4-panel$)')
+
+    for Ctring in ${CHANELS}; do
+        printf '%b\n' "\n\n Ctring=\"$Ctring\"\n\n$(xfconf-query -c $Ctring -lv|grep -Ev '(/conf|/plug|<|000$)'|awk '{ $2 = $1 " -s \"" $2;$1 = """   xfconf-query -c $Ctring -p";print;}'|sed s'/$/"/')" >> "$HOME/.local/share/stork/baza_maciv-guery"
+    done
+
+                    printf '%b\n' '
+ # Array of commands other...' >> "$HOME/.local/share/stork/baza_maciv-guery"
+BUTTON=`gsettings get org.gnome.desktop.wm.preferences button-layout` && printf '%b\n' "gsettings set org.gnome.desktop.wm.preferences button-layout ${BUTTON}" >> "$HOME/.local/share/stork/baza_maciv-guery"
+                   printf '%b\n'  >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+        WMNAME=`wmctrl -m | grep -Ewom1 "Xfwm4|Metacity|Compiz"`
+        COM_GTK_PIDS=$(pidof 'gtk-window-decorator')
+        EMERALD_PIDS=$(pidof 'emerald')
+                    printf '%b\n' '
+      killall "gtk-window-decorator"
+      killall "emerald"
+      killall "compton"
+
+      sleep    0.4' >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+ThemeMetacity=$(gsettings get org.gnome.metacity.theme name)
+printf '%b\n' "gsettings set org.gnome.metacity.theme type metacity
+gsettings set org.gnome.metacity.theme name ${ThemeMetacity}
+" >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+# 2020/04/04 - 19:23                                        #
+#~~~~~~~~~~~~~~~~~~~~<GTK-3.0 THEME>~~~~~~~~~~~~~~~~~~~~~~~~#
+#>>              <reserved  for  work>                    <<#
+# Используйте find, чтобы вычислить сумму для каждого файла
+  find ~/.themes/*/ /usr/share/themes/*/ -type d -name 'gtk-3.0' -print0 | xargs -0 du -sbP | sort -u > /tmp/dir4.txt
+
+# Повторите процедуру в config каталоге для gtk-3.0 темы.
+  G_DIR_1=$(du  -sbP ~/.config/gtk-3.0 | cut -f1)
+
+# Узнать имя установленной gtk-2.0 темы.
+  G_THEME=$(xfconf-query -c xsettings -p /Net/ThemeName)
+
+# Поиск по gtk-2 наличие суммы и gtk 3 темы.
+  G_THEMECYM=$(grep -w "$G_THEME" /tmp/dir4.txt | cut -d/ -f1)
+
+# Сравнение результата выражения, или продолжить сравнение.
+  if [[ ${G_DIR_1} == ${G_THEMECYM} ]]; then
+        Name_gtk_theme="$G_THEME"
+    else
+        Name_gtk_theme=$(grep -Eom1 '^[a-zA-Z0-9].*$' $HOME/.config/gtk-3.0/themename)
+  fi
+
+# Прроверка если строка пуста: Присвоить Default.
+  Gtk3Theme=${Name_gtk_theme:-Default}
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+  for x in "/usr/share/themes/${Gtk3Theme}" "$HOME/.themes/${Gtk3Theme}"; do
+    if [[ -d ${x}/gtk-3.0 ]]; then
+       printf '%b\n' "find  \"$HOME/.config/gtk-3.0/\"  -delete" >> "$HOME/.local/share/stork/baza_maciv-guery"
+       [[ -d ${x}/gtk-3.0 ]] && printf '%b\n' "cp -a \"${x}/gtk-3.0/\". \"$HOME/.config/gtk-3.0\"" >> "$HOME/.local/share/stork/baza_maciv-guery"
+       printf '%b\n' "echo \"${Gtk3Theme:-Default}\" > \"$HOME/.config/gtk-3.0/themename\"" >> "$HOME/.local/share/stork/baza_maciv-guery"
+    fi
+
+  done
+
+
+EmeraldTheme=$(grep '^[A-Za-z0-9]' "$HOME/.emerald/theme/themename")
+[[ "${EMERALD_PIDS}" -eq 0 ]] || [[ -n "$EmeraldTheme" ]] && printf '%b\n' "
+   find  \"$HOME/.emerald/theme/\"  -delete" >> "$HOME/.local/share/stork/baza_maciv-guery"
+[[ "${EMERALD_PIDS}" -eq 0 ]] || [[ -n "$EmeraldTheme" ]] && printf '%b\n' "   cp -a \"$HOME/.emerald/themes/${EmeraldTheme}/\".  \"$HOME/.emerald/theme\"
+" >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+
+[[ "${EMERALD_PIDS}" -eq 0 ]] || printf '%b\n' '      sleep    0.4\n    emerald --replace &
+      sleep    0.4' >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+   [[ ${WMNAME} == 'Xfwm4' ]]    && printf '%b\n' '   xfwm4 --replace &'    >> "$HOME/.local/share/stork/baza_maciv-guery"
+   [[ ${WMNAME} == 'Metacity' ]] && printf '%b\n' '   metacity --replace &' >> "$HOME/.local/share/stork/baza_maciv-guery"
+   [[ ${WMNAME} == 'Compiz' ]]   && printf '%b\n' '   compiz --replace &'   >> "$HOME/.local/share/stork/baza_maciv-guery"
+   COMPTON=`ps -ef | grep '[c]ompton'` && printf '%b\n' '   compton &'      >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+[[ "${COM_GTK_PIDS}" -eq 0 ]] || printf '%b\n' "
+   gtk-window-decorator --metacity-theme ${ThemeMetacity} --replace &" >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+
+printf '%b\n' '     sleep 0.4
+# wmctrl -c "Custom desktop settings"
+' >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+printf '%b\n' "      sleep    0.4
+# ${0%/*/*}/xfce-interface-xsettings &
+" >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+
+
+output=$( bash <<EOF
+
+echo -e 'echo "#!/bin/bash
+$(grep -v '#' "$HOME/.conky/conky-startup.sh")
+" > "$HOME/.conky/conky-startup.sh"'
+#
+EOF
+)
+echo "${output}
+" >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+
+
+grep -v 'sleep' "$HOME/.conky/conky-startup.sh" >> "$HOME/.local/share/stork/baza_maciv-guery"
+printf '%b\n' '#
+
+
+#
+' >> "$HOME/.local/share/stork/baza_maciv-guery"
+
+chmod 755  "$HOME/.local/share/stork/baza_maciv-guery"
+
+test -f "/tmp/baza_maciv-rett" && exit 0
+test -f "/tmp/baza_maciv-rett" || cp "$HOME/.local/share/stork/baza_maciv-guery"  "/tmp/baza_maciv-rett"
+chmod 755 "/tmp/baza_maciv-rett"
+
+exit 0
+
+

@@ -1,0 +1,67 @@
+#!/bin/bash
+# ==========>2020<==========
+# : >> nikonik@chita.ru << :
+# ==========================
+# Copyright © 2018-2020 Nikolay Andriychuk.
+# Я не программист и люблю взламывать Yad и все классные вещи, возможные с Yad & Bash и тд:
+
+license () { echo '
+  * Copyright © 2018-2020 Nikolay Andriychuk.
+  *
+  * Эта программа является свободным программным обеспечением;
+  * Вы можете распространять его или изменить его в соответствии с условиями
+  * Стандартной общественной лицензии GNU как опубликовано Фондом 
+  * свободного программного обеспечения;
+  *
+  * Эта программа распространяется в надежде, что она будет полезна, но
+  * БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ; даже без подразумеваемой гарантии
+  * ТОВАРНОЙ ПРИГОДНОСТИ или ПРИГОДНОСТИ ДЛЯ КОНКРЕТНОЙ ЦЕЛИ.
+  * Смотрите GNU General Public License для более подробной информации.
+  * 
+  * Если вы не получили копию лицензии GNU вместе с этой программой; 
+  * или у вас есть какие-либо вопросы о лицензировании , напишите в свободное
+  * программное обеспечение и получите копию лицензии версия 2 или
+  * более поздняя версия.
+  *
+  * От вас не требуется согласие с чем бы то ни было для простого пользования.
+'; return 0; }
+
+ test $1 == --help 2>/dev/null && license && exit 0
+
+  sleep 0.3
+
+theme_name="$(xfconf-query -c xsettings -p /Net/ThemeName -v)"
+P_Image=$(find "$HOME/.themes/${theme_name}/gtk-2.0" "/usr/share/themes/${theme_name}/gtk-2.0" -type f -name "panel-bg.*" 2> /dev/null | head -n1)
+
+# Номер первой панели. Зависит от ОС
+Panel_N1=$(xfconf-query --channel xfce4-panel --property /panels | grep '^[0-9]$' | head -n1)
+Panel_N2=$(xfconf-query --channel xfce4-panel --property /panels | grep '^[0-9]$' | tail -n1)
+
+  Panel_background="$P_Image"
+      mime_type=$(file --mime-type -b "${Panel_background}")  # Проверить изображение:
+  if [[ ! "${mime_type}" == image/* ]]; then
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N1}/background-style -s "0"
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N1}/size -s "31"
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N2}/background-style -s "0"
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N2}/size -s "31"
+      notify-send -i info Information " Panel background Invalid image, ${theme_name}"
+  fi
+
+  if [[ "${mime_type}" == image/* ]]; then
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N1}/background-image -s "${Panel_background}"
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N1}/background-style -s "2"
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N2}/background-image -s "${Panel_background}"
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N2}/background-style -s "2"
+      SIZEH="$(identify -format "%h" "${Panel_background}")"                                 # Проверка высоты панели.
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N1}/size -s "${SIZEH}"
+      xfconf-query -c xfce4-panel -p /panels/panel-${Panel_N2}/size -s "${SIZEH}"
+  fi
+
+xfconf-query --channel xfwm4 --property /general/workspace_names --type string --set "1" --type string --set "2" --type string --set "3" --type string --set "4" --create --force-array
+xfconf-query --channel xfwm4         --property /general/workspace_count        --type int  --set 4     --create
+xfconf-query --channel xfce4-desktop --property /backdrop/single-workspace-mode --type bool --set false --create
+  sleep 0.3
+xfce4-panel --restart &
+
+exit 0
+

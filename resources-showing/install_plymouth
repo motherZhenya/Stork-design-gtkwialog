@@ -1,0 +1,27 @@
+#!/bin/bash
+# =========>2018<===========
+# : >> nikonik@chita.ru << :
+# ==========================
+##--------------------------------------------------------------------------------------------------------
+# stork-design-dialog
+# called from menu item dialog
+# called by Wiev plymouth
+#
+clear
+if [ $EUID -ne 0 ]; then pkexec $0; exit; else :; fi
+
+Theme=$(cat <"/tmp/NAMEplymouth")
+sleep 0.2
+[[ -z "${Theme}" ]] && exit 1
+sleep 0.2
+sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/${Theme}/${Theme}.plymouth 100
+sleep 0.2
+sudo ln -sfn /usr/share/plymouth/themes/${Theme}/${Theme}.plymouth /etc/alternatives/default.plymouth
+sleep 0.2
+#sudo update-alternatives --config default.plymouth
+sudo update-initramfs -u
+wait
+##--------------------------------------------------------------------------------------------------------
+clear
+
+exit 0
