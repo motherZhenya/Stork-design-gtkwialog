@@ -1,0 +1,259 @@
+#!/bin/bash
+# =^^^====>2019-2020<=======
+# : >> nikonik@chita.ru << :
+# =====^^============^^=====
+##Array of commands Xfce...#
+#
+# Пн июн 15 17:09:25 +09 2020
+
+notify-send -i info Information  "DISCLAIMER: Be very careful with this code.
+  If possible, test on a spare system or in a virtual machine.
+  This works on my system (in this case xubuntu), but I cannot vouch for others.
+  You have been warned."
+
+#wmctrl -c  " Stork Setting Styles of design "
+
+ # Array of commands  xfconf-query...
+
+
+ Ctring="xfce4-notifyd"
+
+   xfconf-query -c $Ctring -p /do-fadeout -s "true"
+   xfconf-query -c $Ctring -p /log-level -s "0"
+   xfconf-query -c $Ctring -p /log-level-apps -s "0"
+   xfconf-query -c $Ctring -p /notify-location -s "2"
+   xfconf-query -c $Ctring -p /primary-monitor -s "0"
+#   xfconf-query -c $Ctring -p /theme -s "Sputnik"
+
+
+ Ctring="xsettings"
+
+   xfconf-query -c $Ctring -p /Gtk/ButtonImages -s "true"
+  # xfconf-query -c $Ctring -p /Gtk/CanChangeAccels -s "true"
+  # xfconf-query -c $Ctring -p /Gtk/ColorPalette -s "black:white:gray50:red:purple:blue:light blue:green:yellow:orange:lavender:brown:goldenrod4:dodger blue:pink:light"
+  # xfconf-query -c $Ctring -p /Gtk/CursorThemeName -s "Chameleon-White-Small"
+   xfconf-query -c $Ctring -p /Gtk/CursorThemeSize -s "16"
+   xfconf-query -c $Ctring -p /Gtk/DecorationLayout -s "menu:minimize,maximize,close"
+   xfconf-query -c $Ctring -p /Gtk/FontName -s "Sans Bold 9"
+   xfconf-query -c $Ctring -p /Gtk/IconSizes -s "panel-menu=24,24:panel=22,22:gtk-button=16,16:gtk-large-toolbar=22,22"
+  # xfconf-query -c $Ctring -p /Gtk/MenuBarAccel -s "F10"
+   xfconf-query -c $Ctring -p /Gtk/MenuImages -s "true"
+   xfconf-query -c $Ctring -p /Gtk/MonospaceFontName -s "Ubuntu Light 9"
+   xfconf-query -c $Ctring -p /Gtk/ToolbarIconSize -s "3"
+   xfconf-query -c $Ctring -p /Gtk/ToolbarStyle -s "Icons only"
+   xfconf-query -c $Ctring -p /Net/CursorBlink -s "true"
+   xfconf-query -c $Ctring -p /Net/CursorBlinkTime -s "1200"
+   xfconf-query -c $Ctring -p /Net/DndDragThreshold -s "8"
+   xfconf-query -c $Ctring -p /Net/DoubleClickDistance -s "5"
+   xfconf-query -c $Ctring -p /Net/DoubleClickTime -s "400"
+   xfconf-query -c $Ctring -p /Net/EnableEventSounds -s "true"
+   xfconf-query -c $Ctring -p /Net/EnableInputFeedbackSounds -s "true"
+   # xfconf-query -c $Ctring -p /Net/IconThemeName -s "Humanity-Dark"
+   xfconf-query -c $Ctring -p /Net/ThemeName -s "Adwaita-dark"
+   xfconf-query -c $Ctring -p /Xft/Antialias -s "1"
+   #xfconf-query -c $Ctring -p /Xft/DPI -s "96"
+   xfconf-query -c $Ctring -p /Xft/Hinting -s "1"
+   xfconf-query -c $Ctring -p /Xft/HintStyle -s "hintslight"
+   xfconf-query -c $Ctring -p /Xft/Lcdfilter -s "lcddefault"
+   xfconf-query -c $Ctring -p /Xft/RGBA -s "rgb"
+
+
+ Ctring="xfwm4"
+
+   xfconf-query -c $Ctring -p /general/activate_action -s "bring"
+   xfconf-query -c $Ctring -p /general/borderless_maximize -s "true"
+   xfconf-query -c $Ctring -p /general/box_move -s "false"
+   xfconf-query -c $Ctring -p /general/box_resize -s "false"
+   xfconf-query -c $Ctring -p /general/button_layout -s "OS|HMC"
+   xfconf-query -c $Ctring -p /general/button_offset -s "0"
+   xfconf-query -c $Ctring -p /general/button_spacing -s "0"
+   xfconf-query -c $Ctring -p /general/click_to_focus -s "true"
+   xfconf-query -c $Ctring -p /general/cycle_apps_only -s "false"
+   xfconf-query -c $Ctring -p /general/cycle_draw_frame -s "true"
+   xfconf-query -c $Ctring -p /general/cycle_hidden -s "true"
+   xfconf-query -c $Ctring -p /general/cycle_minimum -s "true"
+   xfconf-query -c $Ctring -p /general/cycle_preview -s "false"
+   xfconf-query -c $Ctring -p /general/cycle_tabwin_mode -s "0"
+   xfconf-query -c $Ctring -p /general/cycle_workspaces -s "false"
+   xfconf-query -c $Ctring -p /general/double_click_action -s "maximize"
+   xfconf-query -c $Ctring -p /general/double_click_distance -s "5"
+   xfconf-query -c $Ctring -p /general/double_click_time -s "400"
+   xfconf-query -c $Ctring -p /general/easy_click -s "Alt"
+   xfconf-query -c $Ctring -p /general/focus_delay -s "250"
+   xfconf-query -c $Ctring -p /general/focus_hint -s "true"
+   xfconf-query -c $Ctring -p /general/focus_new -s "true"
+   xfconf-query -c $Ctring -p /general/frame_opacity -s "100"
+   xfconf-query -c $Ctring -p /general/full_width_title -s "true"
+   xfconf-query -c $Ctring -p /general/horiz_scroll_opacity -s "false"
+   xfconf-query -c $Ctring -p /general/inactive_opacity -s "100"
+   xfconf-query -c $Ctring -p /general/maximized_offset -s "0"
+   xfconf-query -c $Ctring -p /general/mousewheel_rollup -s "false"
+   xfconf-query -c $Ctring -p /general/move_opacity -s "100"
+   xfconf-query -c $Ctring -p /general/placement_mode -s "center"
+   xfconf-query -c $Ctring -p /general/placement_ratio -s "20"
+   xfconf-query -c $Ctring -p /general/popup_opacity -s "100"
+   xfconf-query -c $Ctring -p /general/prevent_focus_stealing -s "false"
+   xfconf-query -c $Ctring -p /general/raise_delay -s "250"
+   xfconf-query -c $Ctring -p /general/raise_on_click -s "true"
+   xfconf-query -c $Ctring -p /general/raise_on_focus -s "false"
+   xfconf-query -c $Ctring -p /general/raise_with_any_button -s "true"
+   xfconf-query -c $Ctring -p /general/repeat_urgent_blink -s "false"
+   xfconf-query -c $Ctring -p /general/resize_opacity -s "100"
+   xfconf-query -c $Ctring -p /general/scroll_workspaces -s "false"
+   xfconf-query -c $Ctring -p /general/shadow_delta_height -s "0"
+   xfconf-query -c $Ctring -p /general/shadow_delta_width -s "0"
+   xfconf-query -c $Ctring -p /general/shadow_delta_x -s "0"
+   xfconf-query -c $Ctring -p /general/shadow_delta_y -s "-3"
+   xfconf-query -c $Ctring -p /general/shadow_opacity -s "50"
+   xfconf-query -c $Ctring -p /general/show_app_icon -s "false"
+   xfconf-query -c $Ctring -p /general/show_dock_shadow -s "true"
+   xfconf-query -c $Ctring -p /general/show_frame_shadow -s "true"
+   xfconf-query -c $Ctring -p /general/show_popup_shadow -s "true"
+   xfconf-query -c $Ctring -p /general/snap_resist -s "false"
+   xfconf-query -c $Ctring -p /general/snap_to_border -s "true"
+   xfconf-query -c $Ctring -p /general/snap_to_windows -s "false"
+   xfconf-query -c $Ctring -p /general/snap_width -s "10"
+   xfconf-query -c $Ctring -p /general/sync_to_vblank -s "false"
+   xfconf-query -c $Ctring -p /general/theme -s "Kokodi"
+   xfconf-query -c $Ctring -p /general/tile_on_move -s "true"
+   xfconf-query -c $Ctring -p /general/title_alignment -s "center"
+   xfconf-query -c $Ctring -p /general/title_font -s "Sans 9"
+   xfconf-query -c $Ctring -p /general/title_horizontal_offset -s "0"
+   xfconf-query -c $Ctring -p /general/titleless_maximize -s "false"
+   xfconf-query -c $Ctring -p /general/title_shadow_active -s "false"
+   xfconf-query -c $Ctring -p /general/title_shadow_inactive -s "false"
+   xfconf-query -c $Ctring -p /general/title_vertical_offset_active -s "0"
+   xfconf-query -c $Ctring -p /general/title_vertical_offset_inactive -s "0"
+   xfconf-query -c $Ctring -p /general/toggle_workspaces -s "false"
+   xfconf-query -c $Ctring -p /general/unredirect_overlays -s "true"
+   xfconf-query -c $Ctring -p /general/urgent_blink -s "false"
+   xfconf-query -c $Ctring -p /general/use_compositing -s "true"
+   xfconf-query -c $Ctring -p /general/workspace_count -s "4"
+   xfconf-query -c $Ctring -p /general/wrap_cycle -s "true"
+   xfconf-query -c $Ctring -p /general/wrap_layout -s "true"
+   xfconf-query -c $Ctring -p /general/wrap_resistance -s "10"
+   xfconf-query -c $Ctring -p /general/wrap_windows -s "true"
+   xfconf-query -c $Ctring -p /general/wrap_workspaces -s "false"
+   xfconf-query -c $Ctring -p /general/zoom_desktop -s "true"
+
+
+ Ctring="thunar"
+
+   xfconf-query -c $Ctring -p /last-icon-view-zoom-level -s "THUNAR_ZOOM_LEVEL_SMALL"
+   xfconf-query -c $Ctring -p /last-separator-position -s "152"
+   xfconf-query -c $Ctring -p /last-show-hidden -s "false"
+   xfconf-query -c $Ctring -p /last-sort-column -s "THUNAR_COLUMN_NAME"
+   xfconf-query -c $Ctring -p /last-sort-order -s "GTK_SORT_ASCENDING"
+   xfconf-query -c $Ctring -p /last-view -s "ThunarIconView"
+   xfconf-query -c $Ctring -p /last-window-height -s "420"
+   xfconf-query -c $Ctring -p /last-window-maximized -s "false"
+   xfconf-query -c $Ctring -p /last-window-width -s "780"
+   xfconf-query -c $Ctring -p /misc-volume-management -s "true"
+   xfconf-query -c $Ctring -p /shortcuts-icon-size -s "THUNAR_ICON_SIZE_SMALLEST"
+
+
+ Ctring="xfce4-desktop"
+
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/image-path -s "/usr/share/xfce4/backdrops/svet-blik-coler.png"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/image-show -s "true"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/image-style -s "5"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace0/color-style -s "0"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace0/image-style -s "3"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace0/last-image -s "/usr/share/xfce4/backdrops/Mousy_X78_FHD.svg"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace1/color-style -s "0"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace1/image-style -s "5"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace1/last-image -s "/usr/share/xfce4/backdrops/svet-blik-kraski.jpg"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace2/color-style -s "0"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace2/image-style -s "5"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace2/last-image -s "/usr/share/xfce4/backdrops/svet-blik-coler.png"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace3/color-style -s "0"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace3/image-style -s "5"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor0/workspace3/last-image -s "/usr/share/xfce4/backdrops/xubuntu-yakkety.png"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor1/image-path -s "/usr/share/xfce4/backdrops/svet-blik-coler.png"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor1/image-show -s "true"
+   xfconf-query -c $Ctring -p /backdrop/screen0/monitor1/image-style -s "5"
+   xfconf-query -c $Ctring -p /backdrop/single-workspace-mode -s "false"
+   xfconf-query -c $Ctring -p /desktop-icons/file-icons/show-device-removable -s "false"
+   xfconf-query -c $Ctring -p /desktop-icons/file-icons/show-filesystem -s "false"
+   xfconf-query -c $Ctring -p /desktop-icons/file-icons/show-home -s "true"
+   xfconf-query -c $Ctring -p /desktop-icons/file-icons/show-removable -s "true"
+   xfconf-query -c $Ctring -p /desktop-icons/file-icons/show-trash -s "false"
+   xfconf-query -c $Ctring -p /desktop-icons/file-icons/show-unknown-removable -s "false"
+   xfconf-query -c $Ctring -p /desktop-icons/icon-size -s "38"
+   xfconf-query -c $Ctring -p /desktop-icons/style -s "2"
+   xfconf-query -c $Ctring -p /desktop-icons/use-custom-font-size -s "true"
+   xfconf-query -c $Ctring -p /last/window-height -s "513"
+   xfconf-query -c $Ctring -p /last/window-width -s "812"
+
+
+
+ Ctring="xfce4-panel"
+
+   xfconf-query -c $Ctring -p /panels/panel-1/autohide-behavior -s "0"
+   xfconf-query -c $Ctring -p /panels/panel-1/background-alpha -s "95"
+   xfconf-query -c $Ctring -p /panels/panel-1/background-image -s "/usr/share/themes/Kokodi/xfwm4/title-2-active.png"
+   xfconf-query -c $Ctring -p /panels/panel-1/background-style -s "2"
+   xfconf-query -c $Ctring -p /panels/panel-1/disable-struts -s "false"
+   xfconf-query -c $Ctring -p /panels/panel-1/enter-opacity -s "100"
+   xfconf-query -c $Ctring -p /panels/panel-1/leave-opacity -s "100"
+   xfconf-query -c $Ctring -p /panels/panel-1/length -s "100"
+   xfconf-query -c $Ctring -p /panels/panel-1/length-adjust -s "false"
+   xfconf-query -c $Ctring -p /panels/panel-1/mode -s "0"
+   xfconf-query -c $Ctring -p /panels/panel-1/nrows -s "1"
+   xfconf-query -c $Ctring -p /panels/panel-1/position -s "p=6;x=0;y=0"
+   xfconf-query -c $Ctring -p /panels/panel-1/position-locked -s "true"
+   xfconf-query -c $Ctring -p /panels/panel-1/size -s "30"
+   xfconf-query -c $Ctring -p /panels/panel-1/span-monitors -s "false"
+   xfconf-query -c $Ctring -p /panels/panel-2/autohide-behavior -s "1"
+   xfconf-query -c $Ctring -p /panels/panel-2/background-alpha -s "95"
+   xfconf-query -c $Ctring -p /panels/panel-2/background-image -s "/usr/share/themes/Kokodi/xfwm4/title-2-active.png"
+   xfconf-query -c $Ctring -p /panels/panel-2/background-style -s "2"
+   xfconf-query -c $Ctring -p /panels/panel-2/disable-struts -s "false"
+   xfconf-query -c $Ctring -p /panels/panel-2/enter-opacity -s "100"
+   xfconf-query -c $Ctring -p /panels/panel-2/leave-opacity -s "100"
+   xfconf-query -c $Ctring -p /panels/panel-2/length -s "100"
+   xfconf-query -c $Ctring -p /panels/panel-2/length-adjust -s "false"
+   xfconf-query -c $Ctring -p /panels/panel-2/mode -s "0"
+   xfconf-query -c $Ctring -p /panels/panel-2/nrows -s "1"
+   xfconf-query -c $Ctring -p /panels/panel-2/position -s "p=8;x=0;y=0"
+   xfconf-query -c $Ctring -p /panels/panel-2/position-locked -s "true"
+   xfconf-query -c $Ctring -p /panels/panel-2/size -s "30"
+   xfconf-query -c $Ctring -p /panels/panel-2/span-monitors -s "false"
+
+ # Array of commands other...
+gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+
+
+      killall "gtk-window-decorator"
+      killall "emerald"
+      killall "compton"
+
+      sleep    0.4
+gsettings set org.gnome.metacity.theme type metacity
+gsettings set org.gnome.metacity.theme name 'Adwaita-dark'
+
+   xfwm4 --replace &
+     sleep 0.4
+#wmctrl -c  "Stork Setting Styles of design"
+      sleep 0.4
+      xfce4-panel --restart &
+
+      sleep 0.4
+      xfdesktop --reload &
+
+      sleep 0.4
+      xfsettingsd  --replace &
+
+      sleep 0.4
+      conky-tray-icon &
+      sleep 0.4
+
+#killall conky
+#cd "/home/stork/.conky/Xubuntu-LG"
+#conky -c "/home/$USER/.conky/Xubuntu-LG/conkyrc" &
+
+
+#/usr/share/stork-dizayn/stork-dizayn &
+
+exit
+

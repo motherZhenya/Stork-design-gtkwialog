@@ -1,0 +1,194 @@
+#!/bin/bash
+# =======>2019-20<==========
+# : >> nikonik@chita.ru << :
+# ==========================
+# Copyright © 2018-2020 Nikolay Andriychuk.
+# https://help.ubuntu.ru/wiki/ccsm
+# Отдельный файл настроек compiz-a для xfce4
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+# создаем отдельный файл настроек compiz-a для xfce4, для этого, в терминале выполняем:
+cp ~/.config/compiz-1/compizconfig/unity.ini ~/.config/compiz-1/compizconfig/xfce4.ini
+
+DIREMERALD=$(which emerald)
+DIRWINDOW=$(which gtk-window-decorator)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+Emerald_Ini()
+{
+cat << _EMERALDINI
+[wall]
+s0_slide_duration = 0,000000
+
+[core]
+s0_active_plugins = core;composite;opengl;compiztoolbox;copytex;decor;gnomecompat;grid;imgjpeg;imgpng;imgsvg;mousepoll;move;obs;place;regex;resize;screenshot;session;splash;text;thumbnail;titleinfo;vpswitch;wobbly;workarounds;annotate;clone;fade;notification;showdesktop;cube;expo;ezoom;rotate;scale;switcher;td;bench;
+s0_hsize = 4
+s0_outputs = 1920x1080+0+0;
+
+[resize]
+s0_mode = 2
+
+[opengl]
+s0_texture_filter = 0
+
+[expo]
+s0_expo_animation = 3
+
+[scale]
+s0_skip_animation = true
+
+[fade]
+s0_fade_mode = 1
+s0_fade_time = 1
+
+[ezoom]
+s0_speed = 100,000000
+
+[move]
+s0_lazy_positioning = true
+s0_mode = 2
+
+[showdesktop]
+s0_skip_animation = true
+
+[grid]
+s0_draw_stretched_window = false
+s0_animation_duration = 0
+
+[gnomecompat]
+s0_command_screenshot = xfce4-screenshooter --fullscreen
+s0_command_window_screenshot = xfce4-screenshooter --window
+s0_command_terminal = xfce4-terminal
+
+[cube]
+s0_skydome_animated = true
+s0_skydome = true
+s0_top_color = #e76304ff
+s0_bottom_color = #431e00ff
+s0_skydome_gradient_end_color = #5450b4ff
+s0_active_opacity = 90,000000
+s0_multioutput_mode = 2
+
+[td]
+
+[decor]
+s0_command = ${DIREMERALD}
+
+_EMERALDINI
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+GWindow_Ini()
+{
+cat << _GWINDOW_INI
+[wall]
+s0_slide_duration = 0,000000
+
+[core]
+s0_active_plugins = core;composite;opengl;compiztoolbox;copytex;decor;gnomecompat;grid;imgjpeg;imgpng;imgsvg;mousepoll;move;obs;place;regex;resize;screenshot;session;splash;text;thumbnail;titleinfo;vpswitch;wobbly;workarounds;annotate;clone;fade;notification;showdesktop;cube;expo;ezoom;rotate;scale;switcher;td;bench;
+s0_hsize = 4
+s0_outputs = 1920x1080+0+0;
+
+[resize]
+s0_mode = 2
+
+[opengl]
+s0_texture_filter = 0
+
+[expo]
+s0_expo_animation = 3
+
+[scale]
+s0_skip_animation = true
+
+[fade]
+s0_fade_mode = 1
+s0_fade_time = 1
+
+[ezoom]
+s0_speed = 100,000000
+
+[move]
+s0_lazy_positioning = true
+s0_mode = 2
+
+[showdesktop]
+s0_skip_animation = true
+
+[grid]
+s0_draw_stretched_window = false
+s0_animation_duration = 0
+
+[gnomecompat]
+s0_command_screenshot = xfce4-screenshooter --fullscreen
+s0_command_window_screenshot = xfce4-screenshooter --window
+s0_command_terminal = xfce4-terminal
+
+[cube]
+s0_skydome_animated = true
+s0_skydome = true
+s0_top_color = #e76304ff
+s0_bottom_color = #431e00ff
+s0_skydome_gradient_end_color = #5450b4ff
+s0_active_opacity = 90,000000
+s0_multioutput_mode = 2
+
+[td]
+
+[decor]
+s0_command = ${DIRWINDOW}
+
+
+_GWINDOW_INI
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+Default_Ini()
+{
+cat << _DEFAULT_INI
+[core]
+s0_active_plugins = core;composite;opengl;compiztoolbox;copytex;decor;gnomecompat;imgjpeg;imgpng;imgsvg;move;obs;place;regex;resize;screenshot;shelf;splash;text;titleinfo;wobbly;animation;animationsim;clone;fade;showdesktop;cube;rotate;scale;scalefilter;switcher;td;
+s0_hsize = 4
+
+[gnomecompat]
+s0_command_window_screenshot = xfce4-screenshooter --window
+s0_command_screenshot = xfce4-screenshooter --fullscreen
+s0_command_terminal = xfce4-terminal
+
+[move]
+
+[place]
+
+[wallpaper]
+s0_cycle_wallpapers = true
+
+_DEFAULT_INI
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+    NAME=
+    NAME=$(wmctrl -m  | grep ^N | awk '{print $2}')
+
+	if [[ "${NAME}" == 'Compiz' ]] && [[ $(pidof emerald) ]]; then
+        sed -i  "s/profile = .*/profile = Emerald/" ~/.config/compiz-1/compizconfig/config
+         Emerald_Ini >  ~/.config/compiz-1/compizconfig/Emerald.ini
+        exit 0
+    fi
+	if [[ "${NAME}" == 'Compiz' ]] && [[ $(pidof gtk-window-decorator) ]]; then
+        sed -i  "s/profile = .*/profile = GWindow/" ~/.config/compiz-1/compizconfig/config
+        GWindow_Ini > ~/.config/compiz-1/compizconfig/GWindow.ini
+        exit 0
+	fi
+
+
+sed -i  "s/profile = .*/profile = Default/" ~/.config/compiz-1/compizconfig/config
+Default_Ini >  ~/.config/compiz-1/compizconfig/Default.ini
+
+ sleep 1
+
+exit 0
+
