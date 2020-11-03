@@ -8,7 +8,7 @@ Stork design - это GUI (Gtkwialog fork gtkdialog) приложение, в о
 Скачать Stork design
 Если из этих скриншотов вам стало интересно узнать больше, вы можете скачать бета-версию Stork design, чтобы попробовать на своем оборудовании и составить свое собственное мнение.
 Скачать: https://yadi.sk/d/SLQojfvIuXztfg
-https://github.com/motherZhenya/Stork-design-gtkwialog/blob/main/Stork-design-wialog_0.8.7_amd64.deb
+
 Помните:
 • Stork design -это GUI (Gtkwialog fork gtkdialog) приложение, в основном bash скрипты для DE: Xfce.
 • Stork design активно развивается
