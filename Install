@@ -1,0 +1,53 @@
+
+STORK DESIGN GTKWIALOG
+
+🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️
+
+СОВЕТЫ РЕКОМЕНДАЦИИ:XUBUNTU 2018-2020!
+✴️ ОБРАТИТЕ ВНИМАНИЕ:
+✴️ Для работы приложения требуються дополнительные не обязательные пакеты.
+
+✴️ КАК УСТАНОВИТЬ ПАКЕТЫ, для оболочки XFCE Compiz, Metacity, Xfwm4:
+    sudo apt update   ✴️ В тестовом режиме CD выйти и войти; исправляет просмотр темы.
+ ✴️ sudo apt upgrade  ✴️ Только после установки системы на диск. Зависит от размера ОЗУ.
+ ✴️ sudo apt install xfce4 xfce4-goodies task-xfce-desktop -y
+    sudo apt install compton compton-conf metacity metacity-common metacity-themes -y
+
+✴️ КАК УСТАНОВИТЬ ПАКЕТЫ, для оболочки XFCE Emerald, Compiz:
+    sudo apt install emerald emerald-themes cairo-dock compizconfig-settings-manager -y
+    sudo apt install compiz compiz-plugins-main compiz-plugins-extra -y
+
+✴️ ДОПОЛНИТЕЛЬНО ВАЖНО, для работы и управления:
+    sudo apt install inkscape dconf-editor wmctrl scrot zenity yad xdotool -y
+ ✴️ sudo apt install gtkwialog #>0.8.7_amd64
+
+✴️ ЛУЧШИЕ ТЕМЫ ДЛЯ UBUNTU
+    sudo apt install darkmint-gtk-theme darkfire-gtk-theme darkcold-gtk-theme -y
+    sudo apt install gnome-brave-icon-theme darkblood-gtk-theme -y
+ ✴️ https://www.gnome-look.org/s/Gnome/browse/cat/135/order/latest/
+ ✴️ https://www.gnome-look.org/s/Gnome/p/1012512
+ ✴️ https://www.gnome-look.org/s/Gnome/p/1349329
+
+✴️ ВАШИ ПРЕДПОЧТЕННИЯ: Другие пакеты могут быть найдены, используя следующую команду;
+  ✴️ apt-cache search xfce4
+
+✴️ Используйте на свой страх и риск. Проводите тесты на виртуальной системе или СD.
+
+🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️
+
+
+exit 0
+
+Примеры доступны для gtkdialog, если для Вас важно скомпилируйте и правте файлы *.sh с заменой \gtkwialog\на\gtkdialog\.
+# wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/gtkdialog/gtkdialog-0.8.3.tar.gz
+
+$ wget https://gtkdialog.googlecode.com/files/gtkdialog-0.8.3.tar.gz
+$ tar -xvf gtkdialog-0.8.3.tar.gz
+$ cd gtkdialog-0.8.3/
+$ ./configure
+$ make
+$ sudo make install
+
+sudo checkinstall --install=no
+
+

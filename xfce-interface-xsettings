@@ -1,0 +1,847 @@
+#!/bin/bash
+# ==========>2020<==========
+# : >> nikonik@chita.ru << :
+# ==========================
+# Copyright © 2018-2020 Nikolay Andriychuk. nikonik@chita.ru
+# Я не программист и люблю взламывать Yad и все классные вещи, возможные с Yad & Bash и тд:
+# Stork Design xfce-interface-settings. Test xubuntu 18.04
+
+# gtkwialog inkscape dconf-editor scrot wmctrl yad
+# compton metacity compiz emerald gtk-window-decorator 
+
+# полезный однострочный, который даст вам полное имя каталога скрипта независимо от того, откуда он вызывается.
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd "$DIR"
+
+mkdir -p "$HOME/.local/share/stork/Aplication/"
+mkdir -p "$HOME/.icons/"
+mkdir -p "$HOME/.themes/"
+mkdir -p "$HOME/.emerald/"
+mkdir -p "$HOME/.config/gtk-2.0/"
+mkdir -p "$HOME/.config/gtk-3.0/"
+
+DIREKTORU="${0%/*}"
+DIRLOCALH="$HOME/.local/share/stork"
+DIRPIXMAP="${DIREKTORU}/pixmaps"
+DIRSHOWIN="${DIREKTORU}/resources-showing"
+$DIRSHOWIN/scan-masiv &
+cd "${DIREKTORU}/"
+
+PlymouthLIST () {
+    printf '%b\n' "<item>$(grep -Ri /usr/share/plymouth/themes/default.plymouth -e "ImageDir=" | awk -F "/" '{print $6}')</item>"
+    for NAMEplymouthTHEME in $(LANG=C; find /usr/share/plymouth/themes -name "*.script" | sort | awk -F"/" '{print  $6}' | sort -u)
+    do
+        printf '%b\n' "<item>$NAMEplymouthTHEME</item>"
+    done
+}
+export -f PlymouthLIST
+
+edit_plymouth () {
+      wmctrl -k on
+(PLIMYTDIALOG=gtkwialog
+PLIMYT_DIALOG='
+<window title="Custom plymouth settings"  window_position="3" resizable="false" border-width="8" icon-name="stork-design-xubuntu">
+  <vbox>
+         <pixmap>
+                <width>256</width>
+                <input file>'"${DIRPIXMAP}/logo_plimut.png"'</input>
+         </pixmap>
+
+		 <text use-markup="true"><label>"<span  font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small><small> «★»   Preview and install the selected Plymouth theme   «★» </small></small></span>"</label></text>
+         <hseparator></hseparator>
+	     <hbox space-expand="true"  space-fill="true" border-width="14">
+         <button  width-request="32" tooltip-text="Test ROOT boot from Plymouth?">
+                <input file>'"${0%/*}/pixmaps/labell.svg"'</input>
+                <width>24</width><height>24</height>
+                <action>'"${0%/*}/resources-showing/test_plymouth.sh"' &</action>
+          </button>
+          <button  width-request="32" tooltip-text="Preview of the selected Plymouth boot?">
+                <input file>'"${0%/*}/pixmaps/pixmaps.svg"'</input>
+                <width>24</width><height>24</height>
+	            <action> exec gifview -T ${PLIMYTTEMA} -a /usr/share/plymouth/themes/${PLIMYTTEMA}/${PLIMYTTEMA} --no-interactive &</action>
+	            <action> exec echo "${PLIMYTTEMA}" > /tmp/NAMEplymouth &</action>
+	            <action> test -f /usr/share/plymouth/themes/${PLIMYTTEMA}/${PLIMYTTEMA} || notify-send -i info error " Plymouth: no diff file /usr/share/plymouth/themes/${PLIMYTTEMA}/${PLIMYTTEMA}" &</action>
+          </button>
+		            <combobox>
+	              		<variable>PLIMYTTEMA</variable>
+                        '"$(PlymouthLIST)"'
+                    </combobox>
+	     </hbox>
+        <hseparator></hseparator>
+ 		<frame  WARNING!>
+			<hbox fill="true" expand="true" border-width="8" >
+				<pixmap>
+					 <input file stock="gtk-dialog-warning"></input>
+				</pixmap>
+                <vseparator></vseparator>
+				<text use-markup="true" selectable="true" wrap="false" justify="true"><label>"<span font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small><small><small><small> 1. Если ваш настольный  ПК  не имеет источника  бесперебойного питания,
+ 2. ЕСЛИ ваша батарея для ноутбука почти мертва и не может поддерживать
+     ноутбук в течение более чем нескольких минут  от зарядного устройства,
+     то  имейте в виду, что  ...  Ваша система может быть не загружаемой, если
+     произойдет  ПЕРЕБОЙ  В ЭЛЕКТРОПИТАНИИ  во время выполнение  этого
+     сценария  установщика.    Этот  риск  может  быть  небольшим.     Но...
+ 3. Обновлены ли ваши резервные копии?</small></small></small></small></span>"</label>
+				</text>
+            <vseparator></vseparator>
+			</hbox>
+		</frame>
+        <hseparator></hseparator>
+      	    <hbox>
+	            <button relief="1" height-request="28"  use-stock="true" label="gtk-about" tooltip-text="About Plymouth?">
+	                 <action> wmctrl -c "About Stork Design" &</action>
+	                 <action> wmctrl -c "LICENSE" &</action>
+	                 <action>gtkwialog -p launch_about &</action>
+                </button>
+        <vseparator></vseparator>
+	            <button relief="1" width-request="120" use-stock="true" label="gtk-apply" tooltip-text="Install the selected theme Plymouth?">
+	                 <action> exec echo "${PLIMYTTEMA}" > /tmp/NAMEplymouth &</action>
+	                 <action>'"${DIRSHOWIN}/install_plymouth"' &</action>
+                </button>
+        <vseparator></vseparator>
+			    <button relief="1" width-request="120" use-stock="true" label="gtk-quit" tooltip-text="Do you really want to exit?">
+			         <action> wmctrl -k off & </action>
+			         <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
+                     <action signal='\"hide\"'>exit:abort</action>
+                     <action> wmctrl -c "Custom plymouth settings" &</action>
+			    </button>
+      	    </hbox>
+  </vbox>
+</window>'
+export PLIMYT_DIALOG
+
+case $1 in
+	-d | --dump) printf '%b\n' "$MAIN_DIALOG" ;;
+	*) $PLIMYTDIALOG --program=PLIMYT_DIALOG ;;
+esac)
+      wmctrl -k off
+exit 0
+}
+ test "${1}" = "--det-plimyt" 2>/dev/null && edit_plymouth && exit 0
+
+plimyt_theme () {
+    PLIMYTTEMA="$(basename "$(grep 'ImageDir' /usr/share/plymouth/themes/default.plymouth)")"
+    test -f "/usr/share/plymouth/themes/${PLIMYTTEMA}/${PLIMYTTEMA}" &&
+    printf '%b\n' "<action> exec gifview -T ${PLIMYTTEMA} -a /usr/share/plymouth/themes/${PLIMYTTEMA}/${PLIMYTTEMA} --no-interactive &</action>" ||
+    printf '%b\n' "<action> notify-send -i info EROOR: \" Plymouth: no diff file /usr/share/plymouth/themes/${PLIMYTTEMA}/${PLIMYTTEMA}\" &</action>"
+}
+export -f plimyt_theme
+
+
+(GTKDIALOG=gtkwialog
+
+
+
+export launch_Install='
+<window title="Install Stork Design"  window_position="3" resizable="false" border-width="8" icon-name="stork-design-xubuntu">
+ <vbox>
+  <hseparator></hseparator>
+
+         <pixmap>
+             <width>480</width>
+			 <input file>'"pixmaps/stork-design-about.png"'</input>
+         </pixmap><hseparator></hseparator>
+
+    <hbox fill="true" expand="true" border-width="8" >
+
+         <pixmap>
+			 <width>72</width>
+			 <input file>'"pixmaps/baner-ubuntu.svg"'</input>
+         </pixmap><vseparator></vseparator>
+
+<text use-markup="true" selectable="true" wrap="false" justify="true"><label>"<span font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small><small>🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️
+
+СОВЕТЫ РЕКОМЕНДАЦИИ:XUBUNTU 2018-2020!
+✴️ ОБРАТИТЕ ВНИМАНИЕ:
+✴️ Для работы приложения требуються дополнительные не обязательные пакеты.
+
+✴️ КАК УСТАНОВИТЬ ПАКЕТЫ, для оболочки XFCE Compiz, Metacity, Xfwm4:
+    sudo apt update   ✴️ В тестовом режиме CD выйти и войти; исправляет просмотр темы.
+ ✴️ sudo apt upgrade  ✴️ Только после установки системы на диск. Зависит от размера ОЗУ.
+ ✴️ sudo apt install xfce4 xfce4-goodies task-xfce-desktop
+    sudo apt install compton compton-conf metacity metacity-common metacity-themes -y
+
+✴️ КАК УСТАНОВИТЬ ПАКЕТЫ, для оболочки XFCE Emerald, Compiz:
+    sudo apt install emerald emerald-themes compizconfig-settings-manager -y
+    sudo apt install compiz compiz-plugins-main compiz-plugins-extra -y
+
+✴️ ДОПОЛНИТЕЛЬНО ВАЖНО, для работы и управления:
+    sudo apt install imagemagick dconf-editor gifsicle wmctrl scrot zenity yad xdotool
+    sudo apt install gtkwialog #>0.8.3-1_amd64
+    sudo apt install -f
+
+✴️ ЛУЧШИЕ ТЕМЫ ДЛЯ UBUNTU
+    sudo apt install darkmint-gtk-theme darkfire-gtk-theme darkcold-gtk-theme -y
+    sudo apt install gnome-brave-icon-theme darkblood-gtk-theme -y
+    https://www.gnome-look.org/s/Gnome/browse/cat/135/order/latest/
+    https://www.gnome-look.org/s/Gnome/p/1012512
+    https://www.gnome-look.org/s/Gnome/p/1349329
+
+✴️ ВАШИ ПРЕДПОЧТЕННИЯ: Другие пакеты могут быть найдены, используя следующую команду;
+  ✴️ apt-cache search xfce4
+
+✴️ Используйте на свой страх и риск. Проводите тесты на виртуальной системе или СD.
+
+🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️🌸️ 🌸️🌸️</small></small></span>"</label>
+</text><vseparator></vseparator>
+    </hbox>
+
+ <hseparator></hseparator>
+ <text use-markup="true"><label>"<span color='"'sienna'"' font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small><small><small> Copyright © 2018-2020 Stork design: Nikolay Andriychuk nikonik@chita.ru</small></small></small></span>"</label></text>
+
+    <hbox space-expand="false" space-fill="false">
+
+	      <button tooltip-text="Opens a terminal as the root user, using gksu to ask for the password">
+	          <input file icon="gksu-root-terminal"></input>
+	          <action>cd; gksu /usr/bin/x-terminal-emulator &</action>
+	      </button>
+	      <button use-stock="true" label="gtk-quit" tooltip-text="Do you really want to exit?"></button>
+   </hbox>
+
+ </vbox>
+</window>
+'
+
+
+
+
+
+
+
+
+
+
+export launch_license='
+<window title="LICENSE"  window_position="3" resizable="false" border-width="8" icon-name="gtk-about">
+ <vbox>
+  <hseparator></hseparator>
+         <pixmap>
+             <width>480</width>
+			 <input file>'"./pixmaps/stork-design-about.png"'</input>
+         </pixmap><hseparator></hseparator>
+    <hbox fill="true" expand="true" border-width="8">
+         <pixmap>
+			 <width>48</width>
+			 <input file>"./pixmaps/baner-ubuntu.svg"</input>
+         </pixmap><vseparator></vseparator>
+<text use-markup="true" selectable="false" wrap="false" justify="true"><label>"<span font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small>ЛИЦЕНЗИЯ!<small>
+
+  * Эта программа является свободным программным обеспечением;
+  * Вы можете распространять его или изменить его в соответствии с условиями
+  * Стандартной общественной лицензии GNU как опубликовано Фондом
+  * свободного программного обеспечения;
+
+  * Программа распространяется в надежде, что она будет полезной, но
+  * БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ; даже без подразумеваемой гарантии
+  * ТОВАРНОЙ ПРИГОДНОСТИ или ПРИГОДНОСТИ ДЛЯ КОНКРЕТНОЙ ЦЕЛИ.
+  * Смотрите GNU General Public License для более подробной информации...
+
+  * Вы должны были получить копию лицензии GNU вместе с этой программой;
+  * или у вас есть какие-либо вопросы о лицензировании, то перейдите по
+  * адресу: http://www.gnu.org/licenses и получите копию лицензии
+  * Версия 3, либо (на Ваше усмотрение) любой редакции, выпущенной позже.
+
+  * От вас не требуется согласие с чем бы то ни было для простого пользования.
+  * Для получения дополнительной информации об этом, а также о применении и 
+  * соблюдении условий GNUGPL, см http://www.gnu.org/licenses
+</small></small></span>"</label>
+</text>
+<vseparator></vseparator>
+    </hbox>
+ <hseparator></hseparator>
+ <text use-markup="true"><label>"<span color='"'sienna'"' font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small><small><small> Copyright © 2018-2020 Stork design: nikonik@chita.ru</small></small></small></span>"</label></text>
+
+    <hbox space-expand="false" space-fill="false">
+         <button use-stock="true" label="gtk-go-back" tooltip-text="about?">
+              <action> wmctrl -c "About Stork Design" </action>
+	          <action> wmctrl -c "LICENSE"</action>
+              <action>gtkwialog -p launch_about &</action>
+         </button>
+	     <button use-stock="true" label="gtk-quit" tooltip-text="Do you really want to exit?">
+	          <action> wmctrl -c "About Stork Design" </action>
+	          <action> wmctrl -c "LICENSE"</action>
+	          <action> wmctrl -k off &</action>
+	     </button>
+   </hbox>
+ </vbox>
+</window>'
+
+export launch_about='
+<window title="About Stork Design"  window_position="3" resizable="false" border-width="8" icon-name="gtk-about">
+ <vbox>
+  <hseparator></hseparator>
+         <pixmap>
+             <width>480</width>
+			 <input file>'"./pixmaps/stork-design-about.png"'</input>
+         </pixmap><hseparator></hseparator>
+
+    <hbox fill="true" expand="true" border-width="8">
+         <pixmap>
+			 <width>48</width>
+			 <input file>"./pixmaps/baner-ubuntu.svg"</input>
+         </pixmap><vseparator></vseparator>
+<text use-markup="true" selectable="false" wrap="false" justify="true"><label>"<span font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'>ABOUT STORK DESIGN GTKWIALOG!<small><small><small>
+
+    Бесплатно распространяемое (GUI) приложение, к ОС. на основе ядра Linux,     X-UBUNTU.
+    расширяющее функционал и упрощающее доступ к различным инструментам настройки.
+
+
+ОГРАНИЧЕНИЯ:
+
+    Версия, предназначенная для использования  в  рабочей среде  XFCE  -  Версия Xubuntu  18.04.
+    Ограниченно возможно частичное использование для  DEBIAN  совместимые дистрибутивы.
+
+
+ИСПОЛЬЗОВАНИЕ:
+
+    Сохранит Ваши предпочтения  в настройке, стиля оформления, рабочего  стола и панелей.
+    Создаст скриншот Gtk +  темы и дамп настроек пользователя для  быстрого востановления.
+    Поддерживает настройку  загрузки ОС.  и  замену  Mенеджера Oкон  Xfwm4,  Metacity,  Compiz.
+    Управления процессами наложения композитности, для Compton, Emerald, Gtk-window-decorator.
+    Поддерживает предвар.  просмотр GIF файлов и замену флеш анимации загрузки Plymouth.
+    Вы также можете использовать  авто. настройку темы окон, и сбросить настройки панели.
+    Дополнительные утилиты  других  разработчиков для настройки  контроля  оформления.</small></small></small></span>"</label>
+</text><vseparator></vseparator>
+    </hbox>
+ <hseparator></hseparator>
+ <text use-markup="true"><label>"<span color='"'sienna'"' font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small><small><small> Copyright © 2018-2020 Nikolay Andriychuk nikonik@chita.ru</small></small></small></span>"</label></text>
+    <hbox space-expand="false" space-fill="false">
+         <button use-stock="true" label="gtk-go-forward" tooltip-text="license?">
+              <action> wmctrl -c "About Stork Design" &</action>
+              <action>gtkwialog -p launch_license &</action>
+         </button>
+	     <button use-stock="true" label="gtk-quit" tooltip-text="Do you really want to exit?">
+	                   <action> wmctrl -c "About Stork Design" &</action>
+	                   <action> wmctrl -c "LICENSE" &</action>
+	                   <action> wmctrl -k off &</action>
+	     </button>
+   </hbox>
+ </vbox>
+</window>'
+
+ COMPOSITE="$(xfconf-query --channel=xfwm4 --property=/general/use_compositing)"
+ WMNAME="$(wmctrl -m | grep ^N | cut -d\  -f2)"
+	if [[ "${COMPOSITE}" == 'true' ]]; then
+        COMPOSITE="composite"
+        else
+        COMPOSITE="$(ps aux | grep -Eom1 '[c]ompton|[e]merald|[g]tk-window-decorator')"
+	fi
+ W_M_S=$(echo -e "${WMNAME} ${COMPOSITE}" | xargs)
+
+CHECK_PO='xfwm4 compton metacity emerald gtk-window-decorator compiz'
+for PO in $CHECK_PO; do
+    if [[ $(which ${PO}) ]];then
+     [[ ${PO} == 'xfwm4' ]]    && [[ ${W_M_S} == 'Xfwm4 composite' ]]          && XFWMCOMPOSIT="stock-on.svg"
+     [[ ${PO} == 'compton' ]]  && [[ ${W_M_S} == 'Xfwm4 compton' ]]            && XFWM4COMPTON="stock-on.svg"
+     [[ ${PO} == 'compton' ]]  && [[ ${W_M_S} == 'Metacity compton' ]]         && METACITYCOMPTON="stock-on.svg"
+     [[ ${PO} == 'metacity' ]] && [[ ${W_M_S} == 'Metacity composite' ]]       && METACITYCOMPOSIT="stock-on.svg"
+     [[ ${PO} == 'compiz' ]]   && [[ ${COMPOSITE} == 'gtk-window-decorator' ]] && DECORATORPIXMAPS="stock-on.svg"
+     [[ ${PO} == 'compiz' ]]   && [[ ${COMPOSITE} == 'emerald' ]]              && EMERALDPIXMAPS="stock-on.svg"
+    fi
+done
+
+
+relation () {
+   cmd=$1
+      printf '%-22s' "$cmd"
+   if hash "$cmd" 2>/dev/null; then
+           printf '%b\n' "enabled"
+      else
+          printf '%b\n' "disabled"
+   fi
+}
+
+STORKAPPlICATION() {
+APPlICATION="${HOME}/.local/share/stork/Aplication"
+DSTOPIIMAGE=""
+cd "${APPlICATION}/"
+for d in ${APPlICATION}/*.desktop;do
+    [[ -e "${d}" ]] && DSTOPIIMAGE="$(printf '%b\n' "${d##*/}" | sed 's/\.desktop//')"
+    if [[ -n "$DSTOPIIMAGE" ]]; then
+       printf '%b\n' " <button image-position=\"2\" tooltip-text=\" Replace desktop settings with user-saved ones?
+ Custom theme: ${DSTOPIIMAGE} ...\">"
+       printf '%b\n' "    <width>260</width>"
+       printf '%b\n' "    <label>\"$DSTOPIIMAGE\"</label>"
+       printf '%b\n' "    <input file>\"${APPlICATION}/${DSTOPIIMAGE}.png\"</input>"
+       printf '%b\n' "    <action>\"${APPlICATION}/${DSTOPIIMAGE}.sh \"</action>"
+       printf '%b\n' '    <action> wmctrl -c "Custom desktop settings"; sleep 4 && '$0' &</action>'
+       printf '%b\n' ' </button>'
+    fi
+done
+}
+
+
+xfwm4list () {
+    xfwmdefault="$(xfconf-query --channel xfwm4 --property /general/theme)"
+    printf '%b' "<default>${xfwmdefault:-Default}</default>"
+    for NAMExfwm4THEME in $(LANG=C; find ~/.themes /usr/share/themes -maxdepth 2 -type d -name "xfwm4" | cut -d '/' -f5 | sort -fu)
+    do
+        printf '%b\n' "<item>$NAMExfwm4THEME</item>"
+    done
+}
+
+metacitylist () {
+    gsettings set org.gnome.desktop.wm.preferences num-workspaces "4"
+    gsettings set org.gnome.desktop.wm.preferences workspace-names "['1', '2', '3', '4']"
+    gsettings set org.gnome.metacity.theme type "metacity"
+        metacitydefault="$(gsettings get org.gnome.metacity.theme name|sed "s/'//g")"
+        printf '%b' "<default>${metacitydefault:-Default}</default>"
+    for NAMEmetacityTHEME in $(LANG=C; find ~/.themes /usr/share/themes -maxdepth 2 -type d -name "metacity-1" | cut -d '/' -f5 | sort -fu)
+    do
+        printf '%b' "<item>$NAMEmetacityTHEME</item>"
+    done
+}
+
+gtk_windowlist () {
+            metacitylist
+}
+
+emeraldlist () {
+    emeraldefault="$(grep '[a-zA-Z0-9]' "$HOME/.emerald/theme/themename")"
+    printf '%b' "<default>${emeraldefault:-Default}</default>"
+    for NAMEemeraldTHEME in $(LANG=C; find ~/.emerald/themes /usr/share/emerald/themes -maxdepth 3 -type f -name "theme.screenshot.png" | cut -d '/' -f6 | sort -fu)
+    do
+        printf '%b\n' "<item>$NAMEemeraldTHEME</item>"
+    done
+}
+
+themeaction () {
+    LISWM="$(pgrep -l 'xfwm4|metacity|emerald|gtk-window-deco'|cut -d ' ' -f2|cut -d '-' -f-2)"
+    [[ -z "$LISWM" ]] && LISWM="xfwm4"
+
+    if [[ "$LISWM" = "metacity" ]]; then
+          ACTIONF=$(printf '%b\n' "
+          <action>gsettings set org.gnome.metacity.theme type metacity</action>
+          <action>gsettings set org.gnome.desktop.wm.preferences theme \"\$listframe\"</action>
+          <action>gsettings set org.gnome.metacity.theme name \"\$listframe\"</action>")
+    fi
+    if [[ "$LISWM" = "gtk-window" ]]; then
+          ACTIONF=$(printf '%b\n' "
+          <action>gsettings set org.gnome.metacity.theme type metacity</action>
+          <action>gsettings set org.gnome.desktop.wm.preferences theme \"\$listframe\"</action>
+          <action>gsettings set org.gnome.metacity.theme name \"\$listframe\"</action>
+          <action>gtk-window-decorator --metacity-theme \"\$listframe\" --replace &</action>")
+    fi
+    if [[ "$LISWM" = "xfwm4" ]]; then
+          ACTIONF=$(printf '%b\n' "
+          <action>xfconf-query --channel xfwm4 --property /general/theme --set \"\$listframe\"</action>")
+    fi
+    if [[ "$LISWM" = "emerald" ]]; then
+          ACTIONF="$(printf '%b\n' "
+          <action>rsync -a --delete \"/usr/share/emerald/themes/\"\$listframe\"/\" \"$HOME/.emerald/theme\"</action>
+          <action>rsync -a --delete \"$HOME/.emerald/themes/\"\$listframe\"/\" \"$HOME/.emerald/theme\"</action>
+          <action>printf '%b' \"\$listframe\" >\"$HOME/.emerald/theme/themename\"</action>
+          <action>emerald --replace &</action>")"
+    fi
+ printf '%b\n' "$ACTIONF"
+}
+
+gtk2list () {
+    gtk2default="$(xfconf-query -c xsettings -p /Net/ThemeName -v)"
+    printf '%b' "<default>${gtk2default:-Default}</default>"
+    for NAMEgtk2THEME in $(LANG=C; find ~/.themes /usr/share/themes -maxdepth 2 -type d -name "gtk-2.0" | cut -d '/' -f5 | sort -fu)
+    do
+        printf '%b\n' "<item>$NAMEgtk2THEME</item>"
+    done
+}
+
+gtk3list () {
+    gtk3default="$(grep '[a-zA-Z0-9]'  ~/.config/gtk-3.0/themename)"
+    printf '%b' "<default>${gtk3default:-Default}</default>"
+    for NAMEgtk3THEME in $(LANG=C; dir --recursive --directory -1 /usr/share/themes/*/* $HOME/.themes/*/* | grep -w 'gtk-3.*$' | cut -d '/' -f5 | sort -fu)
+    do
+        printf '%b\n' "<item>$NAMEgtk3THEME</item>"
+    done
+}
+
+geticons () {
+    geticonsdefault="$(xfconf-query -c xsettings -p /Net/IconThemeName -v)"
+    printf '%b' "<default>${geticonsdefault:-Default}</default>"
+    for NAMEiconsTHEME in $(LANG=C; grep -as 'Directories[=]' $(ls /usr/share/icons/*/i*.theme $HOME/.icons/*/i*.theme) | cut -d '/' -f5 | sort -fu)
+    do
+        printf '%b\n' "<item>$NAMEiconsTHEME</item>"
+    done
+}
+
+getcursor () {
+    getcursordefault="$(xfconf-query -c xsettings -p /Gtk/CursorThemeName -v)"
+    printf '%b' "<default>${getcursordefault:-Default}</default>"
+    for NAMEcursorTHEME in $(LANG=C; dir --recursive --directory -1 /usr/share/icons/*/* $HOME/.icons/*/* | grep -w 'cursors$' | cut -d "/" -f5 | sort -fu)
+    do
+        printf '%b\n' "<item>$NAMEcursorTHEME</item>"
+    done
+}
+
+cd "${DIREKTORU}/"
+
+export MAIN_DIALOG='
+<window title="Custom desktop settings" window_position="3" border-width="14" space-expand="true" maximize_initially="true" icon-name="stork-design-xubuntu">
+	<vbox>
+	<hbox space-expand="true" space-fill="false">
+	      <button tooltip-text="Xfce4 popup Whisker Menu for Xfce">
+	          <input file icon="stork-design-mouse"></input>
+			  <action>xfce4-popup-whiskermenu --pointer &</action>
+		  </button>
+	      <button tooltip-text="Set desktop background and menu and icon behavior">
+	          <input file icon="preferences-desktop-wallpaper"></input>
+	          <action>xfdesktop-settings &</action>
+	      </button>
+	      <button tooltip-text="Customize the panel">
+	          <input file icon="xfce4-panel"></input>
+			  <action>xfce4-panel --preferences &</action>
+	      </button>
+	      <button tooltip-text="Customize how notifications appear on your screen">
+	          <input file icon="xfce4-notifyd"></input>
+	          <action>xfce4-notifyd-config &</action>
+	      </button>
+               <hseparator space-expand="true"></hseparator>
+			<pixmap>
+                 <input file>'"${0%/*}/pixmaps/glossy.png"'</input>
+			</pixmap>
+               <hseparator space-expand="true"></hseparator>
+
+	      <button tooltip-text="Configure the login window">
+	          <input file icon='\"$(grep -Ew "Icon" /usr/share/applications/lightdm*.desktop | cut -d '=' -f2)\"'></input>
+	          <action>'"lightdm-gtk-greeter-settings-pkexec || pkexec lightdm-settings"' &</action>
+	      </button>
+	      <button tooltip-text="Customize desktop startup and splash screen">
+	          <input file icon="xfce4-session"></input>
+			  <action>xfce4-session-settings &</action>
+	      </button>
+	      <button tooltip-text="Graphical settings editor for Xfconf">
+	          <input file icon="preferences-system"></input>
+	          <action>xfce4-settings-editor &</action>
+	      </button>
+	      <button tooltip-text="Graphical Settings Manager for Xfce">
+	          <input file icon="preferences-desktop"></input>
+			  <action>xfce4-settings-manager &</action>
+	      </button>
+	 </hbox>
+
+        <hbox resizable="true" width-request="640">
+				<vbox scrollable="true"  space-fill="true"  space-expand="false">
+				     <hseparator></hseparator>
+                     <text use-markup="true"><label>"<span  font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small><small> «★» Custom theme: «Stork Design» «★» </small></small></span>"</label></text>
+				   <hbox space-expand="true" space-fill="true">
+			  		    <button use-stock="true" label="gtk-save" tooltip-text="Keep your current desktop theme settings?">
+			 		        <action> wmctrl -c "Custom desktop settings"</action>
+			 		        <action>'"${0%/*}/resources-showing/scan-dialog"' & </action>
+			  		    </button>
+			  		    <button use-stock="true" label="gtk-delete" tooltip-text="Do you want to delete only the current desktop theme setting?">
+			 		        <action>'${0%/*}'/resources-showing/scan-dialog 'click-one' </action>
+			 		        <action> wmctrl -c "Custom desktop settings"</action>
+			 		        <action> exec '$0' & </action>
+			  		    </button>
+				   </hbox>
+                       <hseparator></hseparator>
+			 		        '"$(STORKAPPlICATION)"'
+                       <hseparator></hseparator>
+			  		   <button width-request="90" use-stock="true" label="gtk-clear" tooltip-text="Do you want to  Clear the window and  settings?">
+			 		        <action>"rm -R $HOME/.local/share/stork/Aplication/* &"</action>
+			 		        <action> wmctrl -c "Custom desktop settings"; sleep 1 && exec '$0' & </action>
+			  		   </button>
+				</vbox>
+            <togglebutton tooltip-text=" Show additional hidden settings? ">
+               <input file>'"${0%/*}/pixmaps/baner-ubuntu.svg"'</input>
+               <width>55</width>
+
+               <action>if true show:vBOX2</action>
+               <action>if true hide:vBOX1</action>
+               <action>if false hide:vBOX2</action>
+               <action>if false show:vBOX1</action>
+            </togglebutton>
+       <vbox  width-request="240">
+				            <hseparator></hseparator>
+			                        <text><label>Select the gtk-2.0 theme:          </label></text>
+				                 <hbox>
+				                	<comboboxtext width-request="190" space-expand="false" tooltip-text=" Replacing the selected gtk-2.0 theme windows? ">
+				                		<variable>GTKTEMA</variable>
+      			                        '"$(gtk2list)"'
+      			                        <action>xfconf-query --channel xsettings --property /Net/ThemeName --set "$GTKTEMA"</action>
+      			                        <action>'"${0%/*}/resources-showing/theme-panels-auto"' & </action>
+				                	</comboboxtext>
+				                	<button width-request="48" space-expand="true" tooltip-text=" Appearance: Customize the look of your desktop? ">
+				                	<width>32</width>
+      			                        <input file>'"${0%/*}/pixmaps/insert-preferences.png"'</input>
+                                        <action> xfce4-appearance-settings &</action>
+      			                        '"$(themeaction)"'
+				                	</button>
+                                </hbox>
+                                <hbox>
+				                	<comboboxtext width-request="190" space-expand="false" tooltip-text=" Replacing the selected gtk-3.0 theme windows? ">
+      			                        <variable>GTK3ENTRY</variable>
+      			                        '"$(gtk3list)"'
+      			                        <action>rsync -a --hard-links --delete-after "/usr/share/themes/$GTK3ENTRY/gtk-3.0/" "$HOME/.config/gtk-3.0"  -q </action>
+      			                        <action>rsync -a --hard-links --delete-after "$HOME/.themes/${GTK3ENTRY}/gtk-3.0/" "$HOME/.config/gtk-3.0"  -q </action>
+      			                        <action>printf '%b' "$GTK3ENTRY" > "$HOME/.config/gtk-3.0/themename"</action>
+      			                        <action> xfdesktop --reload &</action>
+				                	</comboboxtext>
+				                	<text space-expand="true">
+				                	    <label>Gtk 3.0</label>
+				                	</text>
+                                </hbox>
+ <text ypad="1" xpad="15" xalign="${XALIGN_LEFT}"><label>'$(pgrep -l 'xfwm4|metacity|emerald|gtk-window-deco'|cut -d ' ' -f2|cut -d '-' -f-2)' window Frame:</label></text>
+				                 <hbox>
+				                	 <comboboxtext width-request="190" tooltip-text=" Replacing the selected theme windows frame? ">
+					                	<variable>listframe</variable>
+      			                        '"$("$(pgrep -l 'xfwm4|metacity|emerald|gtk-window-deco'|cut -d ' ' -f2|cut -d '-' -f-2|tr '-' '_')list")"'
+      			                        '"$(themeaction)"'
+				                	</comboboxtext>
+				                	<button width-request="48" space-expand="true" tooltip-text=" Konfiguration theme frame? ">
+				                	<width>32</width>
+      			                        <input file>'"${0%/*}/pixmaps/insert-link.png"'</input>
+                                        <action> pidof xfwm4 && xfwm4-settings &</action>
+                                        <action> pidof compton && compton-conf &</action>
+                                        <action> pidof metacity && 'metacity-theme-viewer' --theme-type='\"metacity\"'  --theme-name='\"$(gsettings get org.gnome.metacity.theme name | sed "s/'//g")\"' &</action>
+                                        <action> pidof emerald && emerald-theme-manager %F &</action>
+                                        <action> pidof compiz && ccsm &</action>
+      			                        '"$(themeaction)"'
+				                	</button>
+                                </hbox>
+                                <hseparator></hseparator>
+                                <hbox>
+				                	<comboboxtext width-request="190" space-expand="false" space-fill="false" tooltip-text=" Replacing the selected icons theme? ">
+      			                        <variable>ICONSENTRY</variable>
+      			                        '"$(geticons)"'
+      			                        <action>xfconf-query --channel xsettings --property /Net/IconThemeName --set "$ICONSENTRY"</action>
+				                	</comboboxtext>
+				                	<text space-expand="true">
+      			                        <label> Icons:  </label>
+				                	</text>
+                                </hbox>
+                                <hbox>
+				                	<comboboxtext width-request="190" space-expand="false" space-fill="false" tooltip-text=" Replacing the selected cursors theme? ">
+      			                        <variable>CURSORSENTRY</variable>
+      			                        '"$(getcursor)"'
+      			                        <action>xfconf-query --channel xsettings --property /Gtk/CursorThemeName --set "$CURSORSENTRY"</action>
+				                	</comboboxtext>
+				                	<text space-expand="true">
+				                	    <label>Cursor:</label>
+				                	</text>
+                                </hbox>
+             <hseparator></hseparator>
+				                <hbox homogeneous="false" space-expand="true">
+				                	<button relief="2" tooltip-text=" Toggle button OSX layout?
+ Some themes are locked in the config file. ">
+         	                	        <input file>'"${0%/*}/pixmaps/windowbuttons-left.svg"'</input>
+          	                	        <width>72</width><height>"22"</height>
+       	                	            <action> xfconf-query --channel xsettings --property /Gtk/DecorationLayout --set "close,minimize,maximize:menu" </action>
+        	                	        <action> xfconf-query --channel xfwm4 --property /general/button_layout --set "CHM|SO" </action>
+         	                	        <action> gsettings set org.gnome.desktop.wm.preferences button-layout "close,minimize,maximize:menu" </action>
+          		                	    <action> gsettings set org.gnome.desktop.wm.preferences num-workspaces "4" </action>
+					                	<action> xfconf-query --channel xfwm4 --property /general/workspace_count --set "4" </action>
+				                	</button>
+                                        <text space-expand="false"><label>Button layout:</label></text>
+				                	<button space-expand="true" relief="2" tooltip-text=" Toggle button Normal layout?
+ Some themes are locked in the config file. ">
+				                        <input file>'"${0%/*}/pixmaps/windowbuttons-right.svg"'</input>
+          		                	    <width>72</width><height>"22"</height>
+         	                	        <action> xfconf-query --channel xsettings --property /Gtk/DecorationLayout --set "menu:minimize,maximize,close" </action>
+        	                	        <action> xfconf-query --channel xfwm4 --property /general/button_layout --set "OS|HMC" </action>
+          	                	        <action> gsettings set org.gnome.desktop.wm.preferences num-workspaces "4" </action>
+          	                	        <action> gsettings set org.gnome.desktop.wm.preferences button-layout "menu:minimize,maximize,close" </action>
+				                	</button>
+				                </hbox>
+                    <hseparator></hseparator>
+            <button image-position="2" space-fill="true" space-expand="true" use-markup="true" tooltip-text="
+              STORK DESIGN DIALOG.
+ ✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️
+ ✴️         GNU GENERAL PUBLIC LICENSE        ✴️
+ ✴️ Copyright © 2018-2020 Nikolay Andriychuk. ✴️
+ ✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️✴️
+                nikonik@chita.ru
+">
+                  <input file>'"${0%/*}/pixmaps/stork-logo.png"'</input>
+                  <label> © 2020 nikonik@chita.ru</label>
+                  <action> wmctrl -c "About Stork Design" &</action>
+                  <action> wmctrl -c "LICENSE" &</action>
+                  <action>gtkwialog -p launch_about &</action>
+            </button>
+             <variable>vBOX1</variable>
+        </vbox>
+        <vbox visible="false" width-request="240" height-request="280">
+               <hseparator></hseparator>
+ <text use-markup="true"><label>"<span  font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small><small> «★»    Select the boot Window Manager    «★» </small></small></span>"</label></text>
+               <hseparator></hseparator>
+          <button space-fill="true" space-expand="true" tooltip-text="Replace loading with Xfwm4 composite Window Manager?">
+            <visible>'"$(relation xfwm4 |grep -Eo 'enabled|disabled')"'</visible>
+            <label>« Xfwm4   composite »</label>
+            <input file>'"${0%/*}/pixmaps/${XFWMCOMPOSIT:-stock.svg}"'</input>
+               <action> rm -r $HOME/.cache/sessions & </action>
+               <action> cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml </action>
+               <action> xfconf-query --channel xfce4-session -p /sessions/Failsafe/Client1_Command --reset </action>
+               <action> xfconf-query --channel xfce4-session -p /sessions/Failsafe/Client0_Command --reset </action>
+               <action> xfconf-query -c xfce4-panel -p $(xfconf-query -c xfce4-panel -lv | grep -Eo "\/plugins\/plugin-[0-9]{1,2}\/miniature-view") -s false </action>
+               <action> kill $(pidof -s emerald compton gtk-window-decorator) </action>
+               <action> xfconf-query -c xfwm4 -p /general/use_compositing -s true </action>
+               <action> xfwm4 --compositor=on --replace & </action>
+               <action> notify-send "Notification X-WM-Stork!" "Replaced window manager on XFWM4 COMPOSITE ON!" --icon=dialog-information & </action>
+               <action> wmctrl -c "Custom desktop settings"; sleep 0.8 && exec '$0' & </action>
+          </button>
+          <button space-fill="true" space-expand="true" tooltip-text="Replace loading with Xfwm4 compton Window Manager?">
+            <visible>'"$(relation compton | grep -Eo 'enabled|disabled')"'</visible>
+            <label>« Xfwm4   compton   »</label>
+            <input file>'"${0%/*}/pixmaps/${XFWM4COMPTON:-stock.svg}"'</input>
+               <action> rm -r $HOME/.cache/sessions & </action>
+               <action> cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml </action>
+               <action> xfconf-query -c xfce4-session -p /sessions/Failsafe/Client0_Command -t string -s "xfwm4" -t string -s "--compositor=off" -t string -s "--replace" -a </action>
+               <action> xfconf-query -c xfce4-session -p /sessions/Failsafe/Client1_Command -t string -s "compton" -a </action>
+               <action> xfconf-query -c xfce4-panel -p $(xfconf-query -c xfce4-panel -lv | grep -Eo "\/plugins\/plugin-[0-9]{1,2}\/miniature-view") -s false </action>
+               <action> kill $(pidof -s compton emerald gtk-window-decorator) </action>
+               <action> xfconf-query -c xfwm4 -p /general/use_compositing -s false </action>
+               <action> xfwm4 --compositor=off --replace & </action>
+               <action> sleep 1 </action>
+               <action> compton -cCGfF -o 0.38 -O 200 -I 200 -t 0 -l 0 -r 3 -D2 -m 0.88 & </action>
+               <action> notify-send "Notification X-WM-Stork!" "Replaced window manager on XFWM4 COMPTON!" --icon=dialog-information & </action>
+               <action> wmctrl -c "Custom desktop settings"; sleep 0.4 && exec '$0' & </action>
+          </button>
+          <button space-fill="true" space-expand="true" tooltip-text=" Replace loading with Metacity compton Window Manager? ">
+            <visible>'"$(relation compton | grep -Eo 'enabled|disabled')"'</visible>
+            <label>« Metacity compton   »</label>
+            <input file>'"${0%/*}/pixmaps/${METACITYCOMPTON:-stock.svg}"'</input>
+               <action> rm -r $HOME/.cache/sessions &</action>
+               <action> cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml </action>
+               <action> xfconf-query -c xfce4-session -p /sessions/Failsafe/Client0_Command -t string -s "metacity" -t string -s "--no-composite" -t string -s "--replace" -a </action>
+               <action> xfconf-query -c xfce4-session -p /sessions/Failsafe/Client1_Command -t string -s "compton" -a </action>
+               <action> xfconf-query -c xfce4-panel -p $(xfconf-query -c xfce4-panel -lv | grep -Eo "\/plugins\/plugin-[0-9]{1,2}\/miniature-view") -s false </action>
+               <action> kill $(pidof -s compton emerald gtk-window-decorator); </action>
+               <action> xfconf-query -c xfwm4 -p /general/use_compositing -s false; </action>
+               <action> metacity --no-composite --replace & </action>
+               <action> sleep 1 </action>
+               <action> compton -cCGfF -o 0.38 -O 200 -I 200 -t 0 -l 0 -r 3 -D2 -m 0.88 & </action>
+               <action> sleep 1 </action>
+               <action> notify-send "Notification X-WM-Stork!" "Replaced window manager on METACITY COMPTON!" --icon=dialog-information & </action>
+                <action> wmctrl -c "Custom desktop settings"; sleep 0.4 && exec '$0' & </action>
+          </button>
+          <button space-fill="true" space-expand="true" tooltip-text=" Replace loading with Metacity composite Window Manager? ">
+            <visible>'"$(relation metacity | grep -Eo 'enabled|disabled')"'</visible>
+            <label>« Metacity composite »</label>
+            <input file>'"${0%/*}/pixmaps/${METACITYCOMPOSIT:-stock.svg}"'</input>
+               <action> rm -r $HOME/.cache/sessions & </action>
+               <action> cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml </action>
+               <action> xfconf-query --channel xfce4-session -p /sessions/Failsafe/Client1_Command --reset </action>
+               <action> xfconf-query -c xfce4-session -p /sessions/Failsafe/Client0_Command -t string -s "metacity" -t string -s "--composite" -t string -s "--replace" -a </action>
+               <action> kill $(pidof -s emerald compton gtk-window-decorator) </action>
+               <action> xfconf-query -c xfwm4 -p /general/use_compositing -s true </action>
+               <action> metacity --composite --replace & </action>
+               <action> notify-send "Notification X-WM-Stork!" "Replaced window manager on METACITY COMPOSITE!" --icon=dialog-information & </action>
+               <action> wmctrl -c "Custom desktop settings"; sleep 0.4 && exec '$0' & </action>
+          </button>
+          <button space-fill="true" space-expand="true" tooltip-text="Replace loading with Emerald compiz Window Manager? ">
+            <visible>'"$(relation emerald | grep -Eo 'enabled|disabled')"'</visible>
+            <label>« Compiz   emerald   »</label>
+            <input file>'"${0%/*}/pixmaps/${EMERALDPIXMAPS:-stock.svg}"'</input>
+               <action> kill $(pidof -s compton gtk-window-decorator) </action>
+               <action> rm -r $HOME/.cache/sessions & </action>
+               <action> cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml </action>
+               <action> xfconf-query -c xfce4-panel -p $(xfconf-query -c xfce4-panel -lv | grep -Eo "\/plugins\/plugin-[0-9]{1,2}\/miniature-view") -s true </action>
+               <action> sleep 1 </action>
+               <action> xfconf-query -c xfwm4 -p /general/use_compositing -s false </action>
+               <action> xfconf-query -c xfce4-session -p /sessions/Failsafe/Client0_Command -t string -s "emerald" -t string -s " --replace" -a </action>
+               <action> xfconf-query -c xfce4-session -p /sessions/Failsafe/Client1_Command -t string -s  "compiz" -t string -s "--replace" -a </action>
+               <action> sleep 1 </action>
+               <action> compiz --replace & </action>
+               <action> emerald --replace & </action>
+               <action> notify-send "Notification X WM Stork!" "Replaced window manager on COMPIZ EMERALD!" --icon=dialog-information & </action>
+               <action> sleep 1 </action>
+               <action> wmctrl -c "Custom desktop settings"; sleep 0.4 && exec '$0' & </action>
+          </button>
+          <button space-fill="true" space-expand="true" tooltip-text="Replace loading with Compiz gtk window decorator Window Manager?">
+            <visible>'"$(relation compiz | grep -Eo 'enabled|disabled')"'</visible>
+            <label>« Compiz   decorator »</label>
+            <input file>'"${0%/*}/pixmaps/${DECORATORPIXMAPS:-stock.svg}"'</input>
+               <action> rm -r $HOME/.cache/sessions & </action>
+               <action> cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml </action>
+               <action> xfconf-query -c xfce4-session -p /sessions/Failsafe/Client0_Command -t string -s  "compiz" -t string -s "--replace" -a </action>
+               <action> xfconf-query -c xfce4-session -p /sessions/Failsafe/Client1_Command -t string -s  "gtk-window-decorator" -t string -s "--replace" -a </action>
+               <action> xfconf-query -c xfce4-panel -p $(xfconf-query -c xfce4-panel -lv | grep -Eo "\/plugins\/plugin-[0-9]{1,2}\/miniature-view") -s true </action>
+               <action> kill $(pidof -s emerald compton) </action>
+               <action> gsettings set org.gnome.desktop.wm.preferences num-workspaces 4 </action>
+               <action> xfconf-query -c xfwm4 -p /general/use_compositing -s false </action>
+               <action> compiz --replace & </action>
+               <action> sleep 1 </action>
+               <action> gtk-window-decorator --replace & </action>
+               <action> sleep 1 </action>
+               <action> notify-send "Notification X WM Stork!" "Replaced window manager on COMPIZ WINDOW DECORATOR!" --icon="dialog-information" & </action>
+               <action> wmctrl -c "Custom desktop settings"; sleep 1 && exec '$0' & </action>
+          </button>
+               <hseparator></hseparator>
+      <text use-markup="true"><label>"<span  font-family='"'Droid Sans'"' weight='"'bold'"' size='"'large'"'><small><small> «★»          Select  the  boot  Plymouth          «★» </small></small></span>"</label></text>
+               <hseparator></hseparator>
+        <hbox height-request="38" homogeneous="true">
+          <button  tooltip-text="Preview of the selected Plymouth boot?">
+               <input file>'"$DIRPIXMAP/pixmaps.svg"'</input>
+               <width>22</width><height>22</height>
+              '"$(plimyt_theme)"'
+          </button>
+          <button relief="2" width-request="108" height-request="38"  tooltip-text="Open Plymouth Installation Manager?">
+               <input file>'"$DIRPIXMAP/logo_plimut.png"'</input>
+               <width>99</width><height>22</height>
+               <action> '"${0}"' --det-plimyt & </action>
+          </button>
+          <button tooltip-text="Test ROOT boot from Plymouth?">
+               <input file>'"$DIRPIXMAP/labell.svg"'</input>
+               <width>22</width><height>22</height>
+               <action>'"${0%/*}/resources-showing/test_plymouth.sh"' &</action>
+          </button>
+        </hbox>
+               <hseparator></hseparator>
+               <variable>vBOX2</variable>
+        </vbox>
+        </hbox>
+		<hbox spacing="20">
+               <hseparator space-expand="true"></hseparator>
+               <button homogenous="true" image-position="0" use-underline="true" tooltip-text="«WARNING!» Update the panel configuration backup, only in Xubuntu!">
+			       <visible>'"$([[ "$(grep -Eo 'Mint' <<<$(inxi -F))" == Mint ]] && echo disabled || echo enabled)"'</visible>
+			       <input file icon="gtk-dialog-warning"></input>
+			       <width>22</width><height>22</height>
+			       <action> '"${0%/*}/resources-showing/x-stork-dizayn-panel"' &</action>
+               </button>
+               <button homogenous="true" image-position="0"  tooltip-text="Create new configuration file compizconfig if missing by default (Default.ini)">
+			       <input file icon="gtk-index"></input>
+			       <width>22</width><height>22</height>
+			       <action>cat '"${DIREKTORU}/resources-data/confcompton"' > '"$HOME/.config/compton.conf"' &</action>
+			       <action>'"${0%/*}/resources-data/example-compiz"' &</action>
+			       <action> notify-send "Notification Stork!" "Replaced file compizconfig.ini!" --icon="dialog-information" & </action>
+			       <action> notify-send "Notification Stork!" "Replaced file compton.conf!" --icon="dialog-information" & </action>
+               </button>
+               <button homogenous="true" image-position="0" tooltip-text="To be able to perform all the operations, the following apps must be installed?">
+			       <input file icon="gtk-dialog-question"></input>
+			       <width>22</width><height>22</height>
+			       <action>gtkwialog -p launch_Install &</action>
+               </button>
+               <button homogenous="true" image-position="0" use-underline="true" tooltip-text="Restore to its previous state?">
+			       <input file>'"$DIRPIXMAP/gnome-robots.png"'</input>
+			       <width>22</width><height>22</height>
+			       <action>"/tmp/baza_maciv-rett"</action>
+			       <action> wmctrl -c "Custom desktop settings"; sleep 1 && exec '$0' & </action>
+               </button>
+               <hseparator  space-expand="true"></hseparator>
+               <button homogenous="true" image-position="0" use-underline="true" tooltip-text="Conky: Do you really want to exit?">
+                   <visible>'"$(relation conky-manager | grep -Eo 'enabled|disabled')"'</visible>
+			       <input file icon="conky-manager"></input>
+			       <width>22</width><height>22</height>
+			       <action> pidof conky && killall conky || conky-manager & exit </action>
+               </button>
+			   <button width-request="110" use-stock="true" label="gtk-apply" tooltip-text="Сustomize set against desktop theme configuration?">
+			       <action>'"$DIRSHOWIN/revise-gtk_avto.sh"' & </action>
+			       <action> wait && wmctrl -c "Custom desktop settings"; sleep 6 && exec '$0' & </action>
+               </button>
+			<button width-request="110" use-stock="true" label="gtk-close" tooltip-text="Do you really want to exit?"></button>
+		</hbox>
+	 </vbox>
+   <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
+ <action signal='\"hide\"'>exit:abort</action>
+</window>
+'
+
+export "MAIN_DIALOG"
+
+case $1 in
+	-d | --dump) printf '%b\n' "$MAIN_DIALOG" ;;
+	*) $GTKDIALOG --program=MAIN_DIALOG ;;
+esac)
+
+
+exit 0
+
+
